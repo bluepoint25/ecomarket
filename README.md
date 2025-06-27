@@ -100,7 +100,7 @@ Se incluye una colección Postman con pruebas para todos los endpoints. Importa 
 
 ## Contacto
 
-Para dudas o soporte, contacta a [tu-email@dominio.com].
+Para dudas o soporte, contacta a b.monasterio@duocuc.cl
 
 ---
 

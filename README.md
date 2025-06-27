@@ -54,7 +54,7 @@ spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
 
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.Oracle12cDialect
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.OracleDialect
 
 server.port=8081 # Cambiar a 8082 para el microservicio producto
 ```

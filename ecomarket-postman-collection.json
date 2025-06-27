@@ -1,0 +1,168 @@
+{
+  "info": {
+    "name": "Ecomarket API Tests",
+    "_postman_id": "ecomarket-collection-001",
+    "description": "Pruebas para microservicios Usuario y Producto - RF1 a RF8",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Usuario - Crear (RF1)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/usuarios",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "usuarios"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Ana Gómez\",\n  \"email\": \"ana.gomez@example.com\",\n  \"password\": \"password123\",\n  \"telefono\": \"987654321\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Usuario - Actualizar (RF2)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/usuarios/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "usuarios", "1"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Ana Gómez Actualizada\",\n  \"email\": \"ana.gomez@example.com\",\n  \"password\": \"newpassword123\",\n  \"telefono\": \"123456789\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Usuario - Obtener por ID (RF3)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8081/api/usuarios/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "usuarios", "1"]
+        }
+      }
+    },
+    {
+      "name": "Usuario - Obtener todos (RF3)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8081/api/usuarios",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "usuarios"]
+        }
+      }
+    },
+    {
+      "name": "Usuario - Eliminar (RF4)",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "http://localhost:8081/api/usuarios/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "usuarios", "1"]
+        }
+      }
+    },
+    {
+      "name": "Producto - Crear (RF5)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "http://localhost:8082/api/productos",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "productos"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Smartphone\",\n  \"descripcion\": \"Smartphone de última generación\",\n  \"precio\": 799.99,\n  \"stock\": 50\n}"
+        }
+      }
+    },
+    {
+      "name": "Producto - Actualizar (RF6)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "http://localhost:8082/api/productos/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "productos", "1"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Smartphone Actualizado\",\n  \"descripcion\": \"Smartphone con mejoras\",\n  \"precio\": 749.99,\n  \"stock\": 45\n}"
+        }
+      }
+    },
+    {
+      "name": "Producto - Obtener por ID (RF8)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8082/api/productos/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "productos", "1"]
+        }
+      }
+    },
+    {
+      "name": "Producto - Obtener todos (RF8)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8082/api/productos",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "productos"]
+        }
+      }
+    },
+    {
+      "name": "Producto - Eliminar (RF7)",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "http://localhost:8082/api/productos/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "productos", "1"]
+        }
+      }
+    }
+  ]
+}

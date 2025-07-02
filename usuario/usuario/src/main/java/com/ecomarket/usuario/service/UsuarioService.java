@@ -1,40 +1,52 @@
 package com.ecomarket.usuario.service;
 
+import com.ecomarket.usuario.dto.UsuarioDTO;
 import com.ecomarket.usuario.model.Usuario;
 import com.ecomarket.usuario.repository.UsuarioRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
 
-    public Usuario crearUsuario(Usuario usuario) {
-        return usuarioRepository.save(usuario);
+    public UsuarioService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    public UsuarioDTO crearUsuario(UsuarioDTO usuarioDTO) {
+        if (usuarioRepository.findByEmail(usuarioDTO.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("El email ya está registrado");
+        }
+        Usuario usuario = usuarioDTO.toEntity();
+        Usuario guardado = usuarioRepository.save(usuario);
+        return UsuarioDTO.fromEntity(guardado);
     }
 
     public Optional<Usuario> obtenerUsuarioPorId(Long id) {
         return usuarioRepository.findById(id);
     }
 
-    public List<Usuario> obtenerTodosUsuarios() {
-        return usuarioRepository.findAll();
+    public List<UsuarioDTO> obtenerTodosUsuarios() {
+        return usuarioRepository.findAll()
+                .stream()
+                .map(UsuarioDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
-    public Usuario actualizarUsuario(Long id, Usuario usuarioActualizado) {
-        return usuarioRepository.findById(id)
-                .map(usuario -> {
-                    usuario.setNombre(usuarioActualizado.getNombre());
-                    usuario.setEmail(usuarioActualizado.getEmail());
-                    usuario.setPassword(usuarioActualizado.getPassword());
-                    usuario.setTelefono(usuarioActualizado.getTelefono());
-                    return usuarioRepository.save(usuario);
-                }).orElse(null);
+    public UsuarioDTO actualizarUsuario(Long id, UsuarioDTO usuarioDTO) {
+        Usuario usuarioActualizado = usuarioRepository.findById(id).map(usuario -> {
+            usuario.setNombre(usuarioDTO.getNombre());
+            usuario.setEmail(usuarioDTO.getEmail());
+            usuario.setPassword(usuarioDTO.getPassword());
+            usuario.setTelefono(usuarioDTO.getTelefono());
+            return usuarioRepository.save(usuario);
+        }).orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        return UsuarioDTO.fromEntity(usuarioActualizado);
     }
 
     public void eliminarUsuario(Long id) {

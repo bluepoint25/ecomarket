@@ -6,26 +6,25 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
-@Table(name = "usuarios")
+@Table(name = "USUARIOS", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Nombre es obligatorio")
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
-    @NotBlank(message = "Email es obligatorio")
     @Email(message = "Email debe ser válido")
+    @NotBlank(message = "El email es obligatorio")
     @Column(unique = true)
     private String email;
 
-    @NotBlank(message = "Contraseña es obligatoria")
+    @NotBlank(message = "La contraseña es obligatoria")
     private String password;
 
     private String telefono;

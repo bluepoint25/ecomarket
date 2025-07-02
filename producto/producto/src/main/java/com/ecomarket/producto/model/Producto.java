@@ -8,25 +8,24 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "productos")
+@Table(name = "PRODUCTOS")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Nombre es obligatorio")
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
     private String descripcion;
 
-    @NotNull(message = "Precio es obligatorio")
+    @NotNull(message = "El precio es obligatorio")
     private BigDecimal precio;
 
-    @NotNull(message = "Stock es obligatorio")
+    @NotNull(message = "El stock es obligatorio")
     private Integer stock;
 }

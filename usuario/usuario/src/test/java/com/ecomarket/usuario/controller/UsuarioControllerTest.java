@@ -1,70 +1,112 @@
 package com.ecomarket.usuario.controller;
 
-import com.ecomarket.usuario.model.Usuario;
+import com.ecomarket.usuario.dto.UsuarioDTO;
 import com.ecomarket.usuario.service.UsuarioService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import org.springframework.http.ResponseEntity;
+import org.mockito.Mockito;
 
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Arrays;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
-class UsuarioControllerTest {
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-    @Mock
+@WebMvcTest(UsuarioController.class)
+public class UsuarioControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @SuppressWarnings("removal")
+    @MockBean
     private UsuarioService usuarioService;
 
-    @InjectMocks
-    private UsuarioController usuarioController;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private UsuarioDTO usuarioDTO;
 
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    public void setup() {
+        usuarioDTO = new UsuarioDTO(1L, "Juan Perez", "juan@example.com", "password123", "123456789");
     }
 
     @Test
-    void testCrearUsuario() {
-        Usuario usuario = new Usuario(null, "Ana", "ana@example.com", "pass", "123456");
-        Usuario creado = new Usuario(1L, "Ana", "ana@example.com", "pass", "123456");
-        when(usuarioService.crearUsuario(usuario)).thenReturn(creado);
+    public void testCrearUsuario() throws Exception {
+        Mockito.when(usuarioService.crearUsuario(any(UsuarioDTO.class))).thenReturn(usuarioDTO);
 
-        ResponseEntity<Usuario> response = usuarioController.crearUsuario(usuario);
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(creado, response.getBody());
+        mockMvc.perform(post("/api/usuarios")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(usuarioDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(usuarioDTO.getId().intValue())))
+                .andExpect(jsonPath("$.nombre", is(usuarioDTO.getNombre())))
+                .andExpect(jsonPath("$.email", is(usuarioDTO.getEmail())));
     }
 
     @Test
-    void testObtenerUsuarioPorId() {
-        Usuario usuario = new Usuario(1L, "Ana", "ana@example.com", "pass", "123456");
-        when(usuarioService.obtenerUsuarioPorId(1L)).thenReturn(Optional.of(usuario));
+    public void testObtenerUsuarioPorId_Existente() throws Exception {
+        Mockito.when(usuarioService.obtenerUsuarioPorId(1L)).thenReturn(Optional.of(usuarioDTO.toEntity()));
 
-        ResponseEntity<Usuario> response = usuarioController.obtenerUsuarioPorId(1L);
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(usuario, response.getBody());
+        mockMvc.perform(get("/api/usuarios/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(usuarioDTO.getId().intValue())))
+                .andExpect(jsonPath("$.nombre", is(usuarioDTO.getNombre())))
+                .andExpect(jsonPath("$.email", is(usuarioDTO.getEmail())));
     }
 
     @Test
-    void testObtenerUsuarioPorIdNoEncontrado() {
-        when(usuarioService.obtenerUsuarioPorId(1L)).thenReturn(Optional.empty());
+    public void testObtenerUsuarioPorId_NoExistente() throws Exception {
+        Mockito.when(usuarioService.obtenerUsuarioPorId(2L)).thenReturn(Optional.empty());
 
-        ResponseEntity<Usuario> response = usuarioController.obtenerUsuarioPorId(1L);
-        assertEquals(404, response.getStatusCodeValue());
+        mockMvc.perform(get("/api/usuarios/2"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void testObtenerTodosUsuarios() {
-        List<Usuario> usuarios = List.of(
-                new Usuario(1L, "Ana", "ana@example.com", "pass", "123456"),
-                new Usuario(2L, "Juan", "juan@example.com", "pass2", "654321")
-        );
-        when(usuarioService.obtenerTodosUsuarios()).thenReturn(usuarios);
+    public void testObtenerTodosUsuarios() throws Exception {
+        UsuarioDTO usuario2 = new UsuarioDTO(2L, "Ana Gomez", "ana@example.com", "pass456", "987654321");
+        Mockito.when(usuarioService.obtenerTodosUsuarios()).thenReturn(Arrays.asList(usuarioDTO, usuario2));
 
-        ResponseEntity<List<Usuario>> response = usuarioController.obtenerTodosUsuarios();
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(2, response.getBody().size());
+        mockMvc.perform(get("/api/usuarios"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].nombre", is(usuarioDTO.getNombre())))
+                .andExpect(jsonPath("$[1].nombre", is(usuario2.getNombre())));
+    }
+
+    @Test
+    public void testActualizarUsuario() throws Exception {
+        UsuarioDTO actualizado = new UsuarioDTO(1L, "Juan Actualizado", "juanact@example.com", "newpass", "111222333");
+        Mockito.when(usuarioService.actualizarUsuario(eq(1L), any(UsuarioDTO.class))).thenReturn(actualizado);
+
+        mockMvc.perform(put("/api/usuarios/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(actualizado)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nombre", is(actualizado.getNombre())))
+                .andExpect(jsonPath("$.email", is(actualizado.getEmail())));
+    }
+
+    @Test
+    public void testEliminarUsuario() throws Exception {
+        Mockito.doNothing().when(usuarioService).eliminarUsuario(1L);
+
+        mockMvc.perform(delete("/api/usuarios/1"))
+                .andExpect(status().isNoContent());
     }
 }

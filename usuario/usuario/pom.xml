@@ -14,10 +14,10 @@
     </parent>
 
     <groupId>com.ecomarket</groupId>
-    <artifactId>producto</artifactId>
+    <artifactId>usuario</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>producto</name>
-    <description>Microservicio Producto para ecomarket</description>
+    <name>usuario</name>
+    <description>Microservicio usuario para ecomarket</description>
 
     <properties>
         <java.version>17</java.version>
